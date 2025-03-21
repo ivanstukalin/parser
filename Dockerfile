@@ -10,14 +10,14 @@ COPY go.mod go.sum ./
 # Загружаем зависимости
 RUN go mod tidy
 
-# Копируем исходный код приложения
+# Копируем исходные файлы в контейнер
 COPY . .
 
 # Устанавливаем дополнительные пакеты, если необходимо
 RUN apk --no-cache add build-base
 
 # Сборка приложения
-RUN GOOS=linux GOARCH=amd64 go build -o main .
+RUN GOOS=linux GOARCH=amd64 go build -o /app/cmd/app/main ./cmd/app
 
 # Этап исполнения
 FROM alpine:latest
@@ -29,7 +29,7 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 # Копируем собранное приложение из этапа сборки
-COPY --from=build /app/main .
+COPY --from=build /app/cmd/app/main .
 
 # Экспонируем порт для приложения
 EXPOSE 8080

@@ -16,8 +16,10 @@ func NewDomainController(useCase *domain.DomainUseCase) *DomainController {
 }
 
 func (c *DomainController) GetDomains(w http.ResponseWriter, r *http.Request) {
+	// обращение к юз кейсу
 	domains, err := c.useCase.GetAllDomains(r.Context())
 	if err != nil {
+		// если ошибка, возвращаем 500
 		http.Error(w, "failed to fetch domains", http.StatusInternalServerError)
 		return
 	}
