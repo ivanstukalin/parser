@@ -11,7 +11,7 @@ func NewRouter(controller *controller.DomainController, cryptosController *contr
 
 	r.Get("/api/domains", controller.GetDomains)
 
-	r.Get("/api/cryptos", cryptosController.GetCryptos)
+	r.Get("/api/cryptocurrencies", cryptosController.GetCryptos)
 
 	return r
 }

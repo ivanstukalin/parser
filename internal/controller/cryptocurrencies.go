@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"parser/internal/usecase/cryptocurrencies"
@@ -18,10 +19,12 @@ func NewCryptoController(useCase *cryptocurrencies.CryptoUseCase) *CryptoControl
 func (c *CryptoController) GetCryptos(w http.ResponseWriter, r *http.Request) {
 	cryptos, err := c.useCase.GetAllCryptos(r.Context())
 	if err != nil {
+		slog.Error("Failed cryptocurrencies", "path", r.URL.Path)
 		http.Error(w, "Failed to get cryptocurrencies", http.StatusInternalServerError)
 		return
 	}
 
+	slog.Info("Successfully cryptocurrencies")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(cryptos)
 }
