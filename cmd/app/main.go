@@ -10,6 +10,7 @@ import (
 	"parser/internal/controller"
 	"parser/internal/provider"
 	"parser/internal/routes"
+	"parser/internal/usecase/cryptocurrencies"
 	"parser/internal/usecase/domain"
 )
 
@@ -33,12 +34,14 @@ func main() {
 
 	// 4 инициализация domain
 	domainUseCase := domain.NewDomainUseCase(pgProvider)
+	cryptosUseCase := cryptocurrencies.NewCryptoUseCase(pgProvider)
 
 	// 5 инициализация контроллера
 	domainController := controller.NewDomainController(domainUseCase)
+	cryptosController := controller.NewCryptoController(cryptosUseCase)
 
 	// 6 инициализация роутера
-	router := routes.NewRouter(domainController)
+	router := routes.NewRouter(domainController, cryptosController)
 
 	// 7 запуск сервера
 	log.Printf("Server starting on port %s", cfg.ServerPort)

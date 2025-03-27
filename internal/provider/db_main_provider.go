@@ -31,3 +31,21 @@ func (p *PgProvider) GetDomains(ctx context.Context) ([]model.Domain, error) {
 	}
 	return result, nil
 }
+
+func (p *PgProvider) GetCryptos(ctx context.Context) ([]model.Crypto, error) {
+	rows, err := p.client.Query("SELECT id, name, code, created_at FROM cryptocurrencies")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []model.Crypto
+	for rows.Next() {
+		var c model.Crypto
+		if err := rows.Scan(&c.ID, &c.Name, &c.Code, &c.CreatedAt); err != nil {
+			return nil, err
+		}
+		result = append(result, c)
+	}
+	return result, nil
+}
