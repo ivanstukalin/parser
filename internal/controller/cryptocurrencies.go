@@ -17,14 +17,14 @@ func NewCryptoController(useCase *cryptocurrencies.CryptoUseCase) *CryptoControl
 }
 
 func (c *CryptoController) GetCryptos(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	cryptos, err := c.useCase.GetAllCryptos(r.Context())
 	if err != nil {
-		slog.Error("Failed cryptocurrencies", "path", r.URL.Path)
+		slog.ErrorContext(ctx, "Failed cryptocurrencies", "path", r.URL.Path)
 		http.Error(w, "Failed to get cryptocurrencies", http.StatusInternalServerError)
 		return
 	}
 
-	slog.Info("Successfully cryptocurrencies")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(cryptos)
 }
