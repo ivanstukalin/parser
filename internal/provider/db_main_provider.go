@@ -65,18 +65,18 @@ func (p *PgProvider) GetCryptoRate(ctx context.Context, cryptocurrenciesID int) 
 
 	var rates []model.CryptoRate
 	for rows.Next() {
-		var cr model.CryptoRate
-		if err := rows.Scan(&cr.ID, &cr.Cryptocurrencies_rate_id, &cr.Rate, &cr.CreatedAt); err != nil {
+		var cryptoRate model.CryptoRate
+		if err := rows.Scan(&cryptoRate.ID, &cryptoRate.Cryptocurrencies_rate_id, &cryptoRate.Rate, &cryptoRate.CreatedAt); err != nil {
 			return nil, err
 		}
-		rates = append(rates, cr)
+		rates = append(rates, cryptoRate)
 	}
 
 	return rates, nil
 }
 
 func (p *PgProvider) InsertCryptoRate(ctx context.Context, cryptocurrenciesID int, rate string) (*model.CryptoRate, error) {
-	var nr model.CryptoRate
+	var newRate model.CryptoRate
 
 	err := p.client.QueryRow(`
         INSERT INTO cryptocurrencies_rate(cryptocurrencies_rate_id, rate)
@@ -84,10 +84,10 @@ func (p *PgProvider) InsertCryptoRate(ctx context.Context, cryptocurrenciesID in
         RETURNING id, cryptocurrencies_rate_id, rate, created_at`,
 		cryptocurrenciesID,
 		rate,
-	).Scan(&nr.ID, &nr.Cryptocurrencies_rate_id, &nr.Rate, &nr.CreatedAt)
+	).Scan(&newRate.ID, &newRate.Cryptocurrencies_rate_id, &newRate.Rate, &newRate.CreatedAt)
 
 	if err != nil {
 		return nil, err
 	}
-	return &nr, nil
+	return &newRate, nil
 }
