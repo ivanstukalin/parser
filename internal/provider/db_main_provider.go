@@ -49,3 +49,45 @@ func (p *PgProvider) GetCryptos(ctx context.Context) ([]model.Crypto, error) {
 	}
 	return result, nil
 }
+
+func (p *PgProvider) GetCryptoRate(ctx context.Context, cryptocurrenciesID int) ([]model.CryptoRate, error) {
+	rows, err := p.client.Query(`
+        SELECT id, cryptocurrencies_rate_id, rate, created_at
+        FROM cryptocurrencies_rate
+        WHERE cryptocurrencies_rate_id = $1
+        ORDER BY created_at DESC`,
+		cryptocurrenciesID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var rates []model.CryptoRate
+	for rows.Next() {
+		var cryptoRate model.CryptoRate
+		if err := rows.Scan(&cryptoRate.ID, &cryptoRate.Cryptocurrencies_rate_id, &cryptoRate.Rate, &cryptoRate.CreatedAt); err != nil {
+			return nil, err
+		}
+		rates = append(rates, cryptoRate)
+	}
+
+	return rates, nil
+}
+
+func (p *PgProvider) InsertCryptoRate(ctx context.Context, cryptocurrenciesID int, rate string) (*model.CryptoRate, error) {
+	var newRate model.CryptoRate
+
+	err := p.client.QueryRow(`
+        INSERT INTO cryptocurrencies_rate(cryptocurrencies_rate_id, rate)
+        VALUES ($1, $2)
+        RETURNING id, cryptocurrencies_rate_id, rate, created_at`,
+		cryptocurrenciesID,
+		rate,
+	).Scan(&newRate.ID, &newRate.Cryptocurrencies_rate_id, &newRate.Rate, &newRate.CreatedAt)
+
+	if err != nil {
+		return nil, err
+	}
+	return &newRate, nil
+}
