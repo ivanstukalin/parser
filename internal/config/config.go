@@ -16,6 +16,7 @@ var requiredEnvs = []string{
 	"DB_PASSWORD",
 	"DB_HOST",
 	"DB_PORT",
+	"BINANCE_API_URL",
 }
 
 type Config struct {
@@ -38,8 +39,9 @@ type DBConfig struct {
 }
 
 type AppConfig struct {
-	SecretKey string `envconfig:"SECRET_KEY" required:"true"`
-	URL       string `envconfig:"URL" required:"true"`
+	SecretKey     string `envconfig:"SECRET_KEY" required:"true"`
+	URL           string `envconfig:"URL" required:"true"`
+	BinanceAPIURL string `envconfig:"BINANCE_API_URL" required:"true"`
 }
 
 func LoadConfig() (*Config, error) {

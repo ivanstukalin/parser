@@ -52,10 +52,10 @@ func (p *PgProvider) GetCryptos(ctx context.Context) ([]model.Crypto, error) {
 
 func (p *PgProvider) GetCryptoRate(ctx context.Context, cryptocurrenciesID int) ([]model.CryptoRate, error) {
 	rows, err := p.client.Query(`
-        SELECT id, cryptocurrencies_rate_id, rate, created_at
-        FROM cryptocurrencies_rate
-        WHERE cryptocurrencies_rate_id = $1
-        ORDER BY created_at DESC`,
+        	SELECT id, cryptocurrencies_rate_id, rate, created_at
+        	FROM cryptocurrencies_rate
+       		WHERE cryptocurrencies_rate_id = $1
+        	ORDER BY created_at DESC`,
 		cryptocurrenciesID,
 	)
 	if err != nil {
@@ -79,9 +79,9 @@ func (p *PgProvider) InsertCryptoRate(ctx context.Context, cryptocurrenciesID in
 	var newRate model.CryptoRate
 
 	err := p.client.QueryRow(`
-        INSERT INTO cryptocurrencies_rate(cryptocurrencies_rate_id, rate)
-        VALUES ($1, $2)
-        RETURNING id, cryptocurrencies_rate_id, rate, created_at`,
+        	INSERT INTO cryptocurrencies_rate(cryptocurrencies_rate_id, rate)
+        	VALUES ($1, $2)
+        	RETURNING id, cryptocurrencies_rate_id, rate, created_at`,
 		cryptocurrenciesID,
 		rate,
 	).Scan(&newRate.ID, &newRate.Cryptocurrencies_rate_id, &newRate.Rate, &newRate.CreatedAt)
@@ -90,4 +90,28 @@ func (p *PgProvider) InsertCryptoRate(ctx context.Context, cryptocurrenciesID in
 		return nil, err
 	}
 	return &newRate, nil
+}
+
+func (p *PgProvider) GetCryptoID(code string) int {
+	var id int
+	p.client.QueryRow(
+		"SELECT id FROM cryptocurrencies WHERE code = $1",
+		code,
+	).Scan(&id)
+	return id
+}
+
+func (p *PgProvider) GetLatestCryptoRate(cryptoID int) *model.CryptoRate {
+	var rate model.CryptoRate
+	err := p.client.QueryRow(`
+		SELECT id, cryptocurrencies_rate_id, rate, created_at 
+		FROM cryptocurrencies_rate 
+		WHERE cryptocurrencies_rate_id = $1
+		ORDER BY created_at DESC LIMIT 1`,
+		cryptoID,
+	).Scan(&rate.ID, &rate.Rate, &rate.CreatedAt)
+	if err != nil || rate.ID == 0 {
+		return nil
+	}
+	return &rate
 }
