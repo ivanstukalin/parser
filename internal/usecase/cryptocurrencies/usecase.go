@@ -2,6 +2,7 @@ package cryptocurrencies
 
 import (
 	"context"
+	"parser/internal/config"
 	"parser/internal/model"
 	"parser/internal/provider"
 )
@@ -9,10 +10,11 @@ import (
 type CryptoUseCase struct {
 	provider      *provider.PgProvider
 	binanceAPIURL string
+	config        *config.AppConfig
 }
 
-func NewCryptoUseCase(provider *provider.PgProvider, binanceAPIURL string) *CryptoUseCase {
-	return &CryptoUseCase{provider: provider, binanceAPIURL: binanceAPIURL}
+func NewCryptoUseCase(provider *provider.PgProvider, cfg *config.AppConfig) *CryptoUseCase {
+	return &CryptoUseCase{provider: provider, binanceAPIURL: cfg.BinanceAPIURL, config: cfg}
 }
 
 type UseCase interface {

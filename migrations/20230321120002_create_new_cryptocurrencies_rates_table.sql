@@ -6,5 +6,7 @@ CREATE TABLE IF NOT EXISTS cryptocurrencies_rate (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE INDEX IF NOT EXISTS idx_cryptocurrencies_rate_crypto_id ON cryptocurrencies_rate(cryptocurrencies_rate_id);
+
 -- migrate:down
 DROP TABLE cryptocurrencies_rate;

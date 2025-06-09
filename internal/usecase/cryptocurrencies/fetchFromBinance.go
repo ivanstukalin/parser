@@ -13,8 +13,7 @@ type BinanceResult struct {
 }
 
 func (uc *CryptoUseCase) fetchFromBinance(symbol string) (*model.CryptoRate, error) {
-	url := fmt.Sprintf(uc.binanceAPIURL, symbol)
-	resp, err := http.Get(url)
+	resp, err := http.Get(fmt.Sprintf(uc.binanceAPIURL, symbol))
 	if err != nil {
 		return nil, err
 	}

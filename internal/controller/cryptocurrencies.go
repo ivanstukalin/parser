@@ -16,6 +16,11 @@ func NewCryptoController(useCase *cryptocurrencies.CryptoUseCase) *CryptoControl
 	return &CryptoController{useCase: useCase}
 }
 
+func (c *CryptoController) ContentJson(w http.ResponseWriter, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
+}
+
 func (c *CryptoController) GetCryptos(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	cryptos, err := c.useCase.GetAllCryptos(r.Context())
@@ -25,8 +30,7 @@ func (c *CryptoController) GetCryptos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(cryptos)
+	c.ContentJson(w, cryptos)
 }
 
 func (c *CryptoController) GetCryptoRate(w http.ResponseWriter, r *http.Request) {
@@ -44,6 +48,5 @@ func (c *CryptoController) GetCryptoRate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(rate)
+	c.ContentJson(w, rate)
 }

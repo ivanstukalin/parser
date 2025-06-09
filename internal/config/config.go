@@ -39,9 +39,10 @@ type DBConfig struct {
 }
 
 type AppConfig struct {
-	SecretKey     string `envconfig:"SECRET_KEY" required:"true"`
-	URL           string `envconfig:"URL" required:"true"`
-	BinanceAPIURL string `envconfig:"BINANCE_API_URL" required:"true"`
+	SecretKey       string `envconfig:"SECRET_KEY" required:"true"`
+	URL             string `envconfig:"URL" required:"true"`
+	BinanceAPIURL   string `envconfig:"BINANCE_API_URL" required:"true"`
+	TimeDurationMin int    `envconfig:"TIME_DURATION_MINS" default:"15"`
 }
 
 func LoadConfig() (*Config, error) {

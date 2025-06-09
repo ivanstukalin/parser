@@ -66,7 +66,7 @@ func (p *PgProvider) GetCryptoRate(ctx context.Context, cryptocurrenciesID int) 
 	var rates []model.CryptoRate
 	for rows.Next() {
 		var cryptoRate model.CryptoRate
-		if err := rows.Scan(&cryptoRate.ID, &cryptoRate.Cryptocurrencies_rate_id, &cryptoRate.Rate, &cryptoRate.CreatedAt); err != nil {
+		if err := rows.Scan(&cryptoRate.ID, &cryptoRate.CryptocurrenciesRateId, &cryptoRate.Rate, &cryptoRate.CreatedAt); err != nil {
 			return nil, err
 		}
 		rates = append(rates, cryptoRate)
@@ -84,7 +84,7 @@ func (p *PgProvider) InsertCryptoRate(ctx context.Context, cryptocurrenciesID in
         	RETURNING id, cryptocurrencies_rate_id, rate, created_at`,
 		cryptocurrenciesID,
 		rate,
-	).Scan(&newRate.ID, &newRate.Cryptocurrencies_rate_id, &newRate.Rate, &newRate.CreatedAt)
+	).Scan(&newRate.ID, &newRate.CryptocurrenciesRateId, &newRate.Rate, &newRate.CreatedAt)
 
 	if err != nil {
 		return nil, err
@@ -109,7 +109,7 @@ func (p *PgProvider) GetLatestCryptoRate(cryptoID int) *model.CryptoRate {
 		WHERE cryptocurrencies_rate_id = $1
 		ORDER BY created_at DESC LIMIT 1`,
 		cryptoID,
-	).Scan(&rate.ID, &rate.Rate, &rate.CreatedAt)
+	).Scan(&rate.ID, &rate.CryptocurrenciesRateId, &rate.Rate, &rate.CreatedAt)
 	if err != nil || rate.ID == 0 {
 		return nil
 	}
