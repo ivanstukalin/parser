@@ -2,18 +2,22 @@ package cryptocurrencies
 
 import (
 	"context"
+	"parser/internal/config"
 	"parser/internal/model"
 	"parser/internal/provider"
 )
 
 type CryptoUseCase struct {
-	provider *provider.PgProvider
+	provider      *provider.PgProvider
+	binanceAPIURL string
+	config        *config.AppConfig
 }
 
-func NewCryptoUseCase(provider *provider.PgProvider) *CryptoUseCase {
-	return &CryptoUseCase{provider: provider}
+func NewCryptoUseCase(provider *provider.PgProvider, cfg *config.AppConfig) *CryptoUseCase {
+	return &CryptoUseCase{provider: provider, binanceAPIURL: cfg.BinanceAPIURL, config: cfg}
 }
 
-func (uc *CryptoUseCase) GetAllCryptos(ctx context.Context) ([]model.Crypto, error) {
-	return uc.provider.GetCryptos(ctx)
+type UseCase interface {
+	GetAllCryptos(ctx context.Context) ([]model.Crypto, error)
+	GetCryptoRate(ctx context.Context, code string) (*model.CryptoRate, error)
 }

@@ -34,7 +34,7 @@ func main() {
 
 	// 4 инициализация domain
 	domainUseCase := domain.NewDomainUseCase(pgProvider)
-	cryptosUseCase := cryptocurrencies.NewCryptoUseCase(pgProvider)
+	cryptosUseCase := cryptocurrencies.NewCryptoUseCase(pgProvider, cfg.App)
 
 	// 5 инициализация контроллера
 	domainController := controller.NewDomainController(domainUseCase)
